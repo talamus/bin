@@ -18,12 +18,12 @@ PS1_PATH_COLOR="1;96"
 PS1_GIT_COLOR="1;30"
 PS1_TIME_COLOR="1;30"
 
-case HOSTNAME in
-    nimbus)
+case "$HOSTNAME" in
+    "nimbus")
         PS1_COLOR="1;34"
         PS1_PATH_COLOR="1;36"
         ;;
-    raspberrypi)
+    "raspberrypi")
         PS1_COLOR="1;96"
         PS1_PATH_COLOR="1;92"
         ;;
