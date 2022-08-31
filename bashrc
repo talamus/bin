@@ -9,7 +9,7 @@ function e {
 }
 
 function current-git-branch {
-    regex="\* ([A-Za-z0-9\-\_/]+)"
+    regex="\* ([A-Za-z0-9/_-]+)"
     [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
 }
 
