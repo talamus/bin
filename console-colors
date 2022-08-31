@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+function print-fg-colors {
+    i=0
+    while [[ $i -lt 8 ]]; do
+        (( color = i + $1 ))
+        printf "\e[%dm%3d " $color $color
+        (( i += 1 ))
+    done
+}
+
+function print-bg-colors {
+    j=0
+    while [[ $j -lt 8 ]]; do
+        (( color = j + $1 ))
+        printf "%3d \e[%dm" $color $color
+        print-fg-colors 30
+        print-fg-colors 90
+        echo -e "\e[0m"
+        (( j += 1 ))
+    done
+}
+
+function print-effect-colors {
+    printf "%3d \e[%dm" $1 $1
+    print-fg-colors 30
+    print-fg-colors 90
+    echo -e "\e[0m $2 $3"
+}
+
+print-effect-colors 2 Faint
+print-effect-colors 0 Normal
+print-effect-colors 1 Bold
+print-effect-colors 3 Italic
+print-effect-colors 4 Underline
+print-effect-colors 21 Double underline
+print-effect-colors 9 Crossed out
+print-effect-colors 7 Reversed
+echo
+print-bg-colors 40
+print-bg-colors 100
