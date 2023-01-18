@@ -37,10 +37,10 @@ PS1+="\u@\H ["                          # user@host [
     PS1+="\w"                           # pwd
     PS1+="\[\e[${PS1_COLOR}m\]"
 PS1+="]"                                # ]
-PS1+="\[\e[${PS1_GIT_COLOR}m\]\]"
+PS1+="\[\e[${PS1_GIT_COLOR}m\]"
 PS1+=" \$(current-git-branch)"          # git branch
 PS1+="\[\e[0m\]"
 PS1+="\n"                               # \n
-PS1+="\[\e[K\]"
+#PS1+="\[\e[K\]"                        # clear to the end of the line
 PS1+="\$ "                              # $
 export PS1
