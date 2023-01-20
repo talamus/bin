@@ -1,4 +1,11 @@
 
+# Customizing standard bash things:
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+unalias ll
+unalias la
+unalias l
+
+# File explorer
 function e {
     if [[ "$WSL_DISTRO_NAME" == "" ]]
     then
@@ -8,10 +15,15 @@ function e {
     fi
 }
 
+# Output current branch name
 function current-git-branch {
     regex="\* ([A-Za-z0-9/_-]+)"
     [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
 }
+
+
+### Fancy color prompt #######################################################
+
 
 PS1_COLOR="1;97"
 PS1_PATH_COLOR="1;96"
@@ -44,3 +56,5 @@ PS1+="\n"                               # \n
 #PS1+="\[\e[K\]"                        # clear to the end of the line
 PS1+="\$ "                              # $
 export PS1
+
+# eof
