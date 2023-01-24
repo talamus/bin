@@ -1,9 +1,9 @@
 
 # Customizing standard bash things:
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
-unalias ll
-unalias la
-unalias l
+unalias ll 2> /dev/null
+unalias la 2> /dev/null
+unalias l  2> /dev/null
 
 # File explorer
 function e {
