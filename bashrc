@@ -5,6 +5,10 @@ unalias ll 2> /dev/null
 unalias la 2> /dev/null
 unalias l  2> /dev/null
 
+alias nuke="rm -frI"	# Safer `rm -fr`
+alias untar="tar zxvf"  # When you do not remember the tar
+alias git-tree="git log --oneline --graph --decorate --all"
+
 # File explorer
 function e {
     if [[ "$WSL_DISTRO_NAME" == "" ]]
