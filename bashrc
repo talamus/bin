@@ -8,6 +8,7 @@ unalias l  2> /dev/null
 alias nuke="rm -frI"	# Safer `rm -fr`
 alias untar="tar zxvf"  # When you do not remember how to explode a tarball
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
+alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
 # File explorer
 function e {
