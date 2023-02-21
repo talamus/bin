@@ -6,8 +6,8 @@ unalias la 2> /dev/null
 unalias l  2> /dev/null
 
 alias nuke="rm -frI"	# Safer `rm -fr`
-alias untar="tar zxvf"  # When you do not remember the tar
-alias git-tree="git log --oneline --graph --decorate --all"
+alias untar="tar zxvf"  # When you do not remember how to explode a tarball
+alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 
 # File explorer
 function e {
@@ -25,6 +25,10 @@ function current-git-branch {
     [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
 }
 
+# Say something (in WSL2)
+function win-speak {
+    /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$*')" > /dev/null
+}
 
 ### Fancy color prompt #######################################################
 
