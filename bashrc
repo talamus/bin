@@ -66,4 +66,7 @@ PS1+="\n"                               # \n
 PS1+="\$ "                              # $
 export PS1
 
+# Command line completion for Hetzner CLI
+hcloud --help > /dev/null 2>&1 && . <(hcloud completion bash)
+
 # eof
