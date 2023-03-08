@@ -36,8 +36,8 @@ function win-speak {
 
 PS1_COLOR="1;37"
 PS1_PATH_COLOR="1;96"
-PS1_GIT_COLOR="1;30"
-PS1_TIME_COLOR="1;30"
+PS1_GIT_COLOR="0;2;3;97"
+PS1_TIME_COLOR="1;90"
 
 case "$HOSTNAME" in
     "nimbus")
