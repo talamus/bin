@@ -34,19 +34,23 @@ function win-speak {
 ### Fancy color prompt #######################################################
 
 
-PS1_COLOR="1;97"
+PS1_COLOR="1;37"
 PS1_PATH_COLOR="1;96"
 PS1_GIT_COLOR="1;30"
 PS1_TIME_COLOR="1;30"
 
 case "$HOSTNAME" in
     "nimbus")
+        PS1_COLOR="1;35"
+        PS1_PATH_COLOR="1;97"
+        ;;
+    "happy-robot")
         PS1_COLOR="1;34"
-        PS1_PATH_COLOR="1;36"
+        PS1_PATH_COLOR="1;97"
         ;;
     "raspberrypi")
-        PS1_COLOR="1;96"
-        PS1_PATH_COLOR="1;92"
+        PS1_COLOR="1;32"
+        PS1_PATH_COLOR="1;97"
         ;;
 esac
 
