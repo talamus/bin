@@ -33,8 +33,7 @@ function win-speak {
 
 ### Fancy color prompt #######################################################
 
-
-PS1_COLOR="1;37"
+PS1_COLOR="1;97"
 PS1_PATH_COLOR="1;96"
 PS1_GIT_COLOR="0;2;3;97"
 PS1_TIME_COLOR="1;90"
@@ -70,7 +69,26 @@ PS1+="\n"                               # \n
 PS1+="\$ "                              # $
 export PS1
 
-# Command line completion for Hetzner CLI
-hcloud --help > /dev/null 2>&1 && . <(hcloud completion bash)
+### Command line completion ##################################################
+
+# Hetzner Cloud CLI
+[ $(which hcloud) ] && source <(hcloud completion bash)
+
+# One Password CLI
+[ $(which op) ] && source <(op completion bash)
+
+# AWS CLI
+[ $(which aws_completer) ] && complete -C /usr/local/bin/aws_completer aws
+
+# Terraform
+[ $(which terraform) ] && complete -C /usr/bin/terraform terraform
+
+# Node Version Manager
+if [ -d "$HOME/.nvm" ]
+then
+    export NVM_DIR="$HOME/.nvm"
+    source "$NVM_DIR/nvm.sh"           # This loads `nvm`
+    source "$NVM_DIR/bash_completion"  # This loads `nvm` bash completion
+fi
 
 # eof
