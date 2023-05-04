@@ -35,10 +35,10 @@ function current-terraform-workspace {
         dev | development)
             COLOR=92
             ;;
-        staging)
+        stag | staging)
             COLOR=93
             ;;
-        production)
+        prod | production)
             COLOR=31
             ;;
     esac
