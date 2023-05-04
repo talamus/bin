@@ -20,10 +20,31 @@ function e {
     fi
 }
 
-# Output current branch name
+# Output current Git branch name
 function current-git-branch {
     regex="\* ([A-Za-z0-9/_-]+)"
     [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
+}
+
+# Output current Terraform workspace name (with color)
+function current-terraform-workspace {
+    [ $(which terraform) ] || return 0
+    WORKSPACE="$( terraform workspace show )"
+    case $WORKSPACE in
+        default)
+            return 0
+            ;;
+        dev | development)
+            COLOR=92
+            ;;
+        staging)
+            COLOR=93
+            ;;
+        production)
+            COLOR=31
+            ;;
+    esac
+    echo -e "\e[0;1;${COLOR}m${WORKSPACE}\e[0m"
 }
 
 # Say something (in WSL2)
@@ -56,17 +77,20 @@ esac
 PS1=""
 #PS1+="\[\e[0;${PS1_TIME_COLOR}m\r\e[K\e[$((COLUMNS-20))C\$( date +'%F %H:%M:%S' )\r\]" # date and time
 PS1+="\[\e[${PS1_COLOR}m\]"
-PS1+="\u@\H ["                          # user@host [
+PS1+="\u@\H ["                                  # user@host [
     PS1+="\[\e[${PS1_PATH_COLOR}m\]"
-    PS1+="\w"                           # pwd
+    PS1+="\w"                                   # pwd
     PS1+="\[\e[${PS1_COLOR}m\]"
-PS1+="]"                                # ]
+PS1+="]"                                        # ]
 PS1+="\[\e[${PS1_GIT_COLOR}m\]"
-PS1+=" \$(current-git-branch)"          # git branch
+PS1+=" \$(current-git-branch)"                  # Git branch
+if [ $(which terraform) ]; then
+    PS1+=" \$(current-terraform-workspace)"     # Terraform workspace
+fi
 PS1+="\[\e[0m\]"
-PS1+="\n"                               # \n
-#PS1+="\[\e[K\]"                        # clear to the end of the line
-PS1+="\$ "                              # $
+PS1+="\n"                                       # \n
+#PS1+="\[\e[K\]"                                # clear to the end of the line
+PS1+="\$ "                                      # $
 export PS1
 
 ### Command line completion ##################################################
