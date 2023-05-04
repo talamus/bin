@@ -28,12 +28,10 @@ function current-git-branch {
 
 # Output current Terraform workspace name (with color)
 function current-terraform-workspace {
-    [ $(which terraform) ] || return 0
+    [ -d .terraform ] || return 0
     WORKSPACE="$( terraform workspace show )"
+    COLOR=97
     case $WORKSPACE in
-        default)
-            return 0
-            ;;
         dev | development)
             COLOR=92
             ;;
