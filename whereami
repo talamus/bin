@@ -1,0 +1,2 @@
+#!/bin/sh
+grep "$(cat /etc/hostname)" /etc/hosts 2> /dev/null || cat /etc/hostname
