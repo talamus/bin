@@ -1,0 +1,36 @@
+#!/bin/bash
+
+function ERROR { echo -e "\e[91;1m$@\e[0m"; exit 1; }
+
+which pandoc > /dev/null || ERROR "Pandoc not installed"
+BODY=$( pandoc "$@" )    || ERROR "Conversion failed"
+
+read -r -d '' HEADER <<HEADER_ENDS
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+    }
+    code, .sourceCode {
+      font-family: Consolas, monospace;
+    }
+    .sourceCode .cf { color: #263aad; font-weight: bold; }
+    .sourceCode .kw { color: #263aad; font-weight: bold; }
+    .sourceCode .fu { color: #108920; font-weight: bold; font-style: italic; }
+    .sourceCode .at { font-style: italic; }
+    .sourceCode .op { color: #263aad; }
+    .sourceCode .dt { color: #263aad; }
+    .sourceCode .dv { color: #108920; }
+    .sourceCode .st { color: #ad3d26; }
+  </style>
+</head>
+<body>
+HEADER_ENDS
+
+FOOTER="</body></html>"
+
+echo "${HEADER}${BODY}${FOOTER}"
