@@ -1,4 +1,7 @@
 
+# Use nano as the editor (if available)
+export EDITOR=$( which nano )
+
 # Customizing standard bash things:
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 unalias ll 2> /dev/null
