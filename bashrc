@@ -1,7 +1,3 @@
-
-# Use nano as the editor (if available)
-export EDITOR=$( which nano )
-
 # Customizing standard bash things:
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 unalias ll 2> /dev/null
@@ -15,8 +11,7 @@ alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
 # File explorer
 function e {
-    if [[ "$WSL_DISTRO_NAME" == "" ]]
-    then
+    if [[ "$WSL_DISTRO_NAME" == "" ]]; then
         xdg-open "$*"
     else
         "explorer.exe" "$*"
@@ -49,9 +44,11 @@ function current-terraform-workspace {
 }
 
 # Say something (in WSL2)
-function win-speak {
-    /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$*')" > /dev/null
-}
+if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+    function win-speak {
+        /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$*')" > /dev/null
+    }
+fi
 
 ### Fancy color prompt #######################################################
 
@@ -93,6 +90,14 @@ PS1+="\n"                                       # \n
 #PS1+="\[\e[K\]"                                # clear to the end of the line
 PS1+="\$ "                                      # $
 export PS1
+
+### Environment extension ####################################################
+
+# Use nano as the editor (if available)
+[ $(which nano) ] && export EDITOR=$( which nano )
+
+# Multiple Python versions
+[ $(which pyenv) ] && eval "$(pyenv virtualenv-init -)"
 
 ### Command line completion ##################################################
 
