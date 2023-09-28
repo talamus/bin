@@ -9,6 +9,9 @@ alias untar="tar zxvf"  # When you do not remember how to explode a tarball
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
+# Use `nano` as the default editor (if available)
+[ $(which nano) ] && export EDITOR=$( which nano )
+
 # File explorer
 function e {
     if [[ "$WSL_DISTRO_NAME" == "" ]]; then
@@ -91,14 +94,6 @@ PS1+="\n"                                       # \n
 PS1+="\$ "                                      # $
 export PS1
 
-### Environment extension ####################################################
-
-# Use nano as the editor (if available)
-[ $(which nano) ] && export EDITOR=$( which nano )
-
-# Multiple Python versions
-[ $(which pyenv) ] && eval "$(pyenv virtualenv-init -)"
-
 ### Command line completion ##################################################
 
 # Hetzner Cloud CLI
@@ -113,12 +108,21 @@ export PS1
 # Terraform
 [ $(which terraform) ] && complete -C /usr/bin/terraform terraform
 
-# Node Version Manager
-if [ -d "$HOME/.nvm" ]
-then
+### Programming language version management ##################################
+
+# NodeJS
+if [ -d "$HOME/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
     source "$NVM_DIR/nvm.sh"           # This loads `nvm`
     source "$NVM_DIR/bash_completion"  # This loads `nvm` bash completion
+fi
+
+# Python
+if [ -d "$HOME/.pyenv" ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PATH:$PYENV_ROOT/bin"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
 
 # eof
