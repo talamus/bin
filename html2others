@@ -1,0 +1,18 @@
+#!/bin/bash
+
+fullname=$(basename -- "$1")
+extension="${fullname##*.}"
+filename="${fullname%.*}"
+
+if [ "$extension" != "html" ]; then
+    echo "$1 is not a HTML file"
+    exit 1
+fi
+
+echo "Creating $filename.rtf ..."
+pandoc "$fullname" --output "$filename.rtf"
+echo "Creating $filename.pdf ..."
+pandoc "$fullname" --output "$filename.pdf"
+echo "Creating $filename.epub ..."
+pandoc "$fullname" --output "$filename.epub" --metadata title="$filename"
+echo "Done!"
