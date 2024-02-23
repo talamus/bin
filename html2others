@@ -11,6 +11,8 @@ fi
 
 echo "Creating $filename.rtf ..."
 pandoc "$fullname" --output "$filename.rtf"
+echo "Creating $filename.docx ..."
+pandoc "$fullname" --output "$filename.docx"
 echo "Creating $filename.pdf ..."
 pandoc "$fullname" --output "$filename.pdf"
 echo "Creating $filename.epub ..."
