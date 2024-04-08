@@ -1,5 +1,7 @@
 # Customizing standard bash things:
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+fi
 unalias ll 2> /dev/null
 unalias la 2> /dev/null
 unalias l  2> /dev/null
@@ -52,6 +54,56 @@ if [[ "$WSL_DISTRO_NAME" != "" ]]; then
         /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$*')" > /dev/null
     }
 fi
+
+### Mounting multipartition images ###########################################
+#
+# $ los my.img         # Mounting an image
+# /dev/loop0
+# /mnt/loop0p1
+# /mnt/loop0p2
+#
+# $ ls /mnt/loop0p1    # Listing files from a partition
+# /whatever
+# /files
+# /youhave
+# /there
+#
+# $ sudo losetup -l    # Listing mounted images
+# NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                                                                                      DIO
+# /dev/loop1         0      0         0  0 /full/path/to/my.img
+#
+# $ losd 0             # Cleanup
+# $ ls /mnt/loop0p1
+# $ ls /dev | grep loop0
+# loop0
+
+los() (
+    img="$1"
+    dev="$(sudo losetup --show -f -P "$img")"
+    echo "$dev"
+    for part in "$dev"?*; do
+        if [ "$part" = "${dev}p*" ]; then
+            part="${dev}"
+        fi
+        dst="/mnt/$(basename "$part")"
+        echo "$dst"
+        sudo mkdir -p "$dst"
+        sudo mount "$part" "$dst"
+    done
+)
+
+losd() (
+    dev="/dev/loop$1"
+    for part in "$dev"?*; do
+        if [ "$part" = "${dev}p*" ]; then
+            part="${dev}"
+        fi
+        dst="/mnt/$(basename "$part")"
+        sudo umount "$dst"
+    done
+    sudo losetup -d "$dev"
+)
+
 
 ### Fancy color prompt #######################################################
 

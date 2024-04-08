@@ -1,0 +1,17 @@
+#!/bin/bash
+
+SERVER=${1:-8.8.8.8}
+LIMIT=${2:-100}
+GOOD_RESPONSE=' time=([0-9]+?)(.[0-9]+)? ms$'
+
+echo "Pinging $SERVER with maximum time limit of $LIMIT ms. Only problems will be printed."
+
+while read LINE; do
+    if [[ ! "$LINE" =~ $GOOD_RESPONSE ]]; then
+        echo "[$( date '+%Y-%m-%d %H:%M:%S' )] $LINE"
+    else
+        if [[ "${BASH_REMATCH[1]}" -gt "$LIMIT" ]]; then
+            echo "[$( date '+%Y-%m-%d %H:%M:%S' )] $LINE"
+        fi
+    fi
+done < <( ping "$SERVER" )
