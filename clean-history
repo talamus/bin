@@ -1,2 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 rm ~/.bash_history 2> /dev/null
+history -cw 2> /dev/null
