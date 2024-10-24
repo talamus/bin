@@ -1,3 +1,7 @@
+### To install add the following to .bashrc ##################################
+#
+# source ~/bin/bashrc
+
 # Customizing standard bash things:
 if [[ "$WSL_DISTRO_NAME" != "" ]]; then
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
