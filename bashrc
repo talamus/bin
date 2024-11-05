@@ -15,6 +15,10 @@ alias untar="tar zxvf"  # When you do not remember how to explode a tarball
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
+if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+    alias ps="powershell.exe"
+fi
+
 # Use `nano` as the default editor (if available)
 [ $(which nano) ] && export EDITOR=$( which nano )
 
