@@ -2,6 +2,11 @@
 #
 # source ~/bin/bashrc
 
+# Add `~/bin` to PATH if needed:
+if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+	PATH="$HOME/bin:$PATH"
+fi
+
 # Customizing standard bash things:
 if [[ "$WSL_DISTRO_NAME" != "" ]]; then
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -134,7 +139,7 @@ case "$HOSTNAME" in
         PS1_PATH_COLOR="1;97"
         ;;
     "vattu")
-        PS1_COLOR="1;36"
+        PS1_COLOR="1;34"
         PS1_PATH_COLOR="1;97"
         ;;
 esac
