@@ -133,6 +133,10 @@ case "$HOSTNAME" in
         PS1_COLOR="1;32"
         PS1_PATH_COLOR="1;97"
         ;;
+    "vattu")
+        PS1_COLOR="1;36"
+        PS1_PATH_COLOR="1;97"
+        ;;
 esac
 
 PS1=""
