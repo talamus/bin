@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+import os
+import shutil
+import tarfile
+import tempfile
+import filecmp
+import sys
+from pathlib import Path
+
+def create_patch_tarball(old_dir, new_dir, output_tarball):
+    """Create a patch tarball containing only changed/new files."""
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        patch_dir = Path(temp_dir) / "patch"
+
+        # Copy new directory to temp location
+        shutil.copytree(new_dir, patch_dir)
+
+        # Compare directories and remove identical files
+        dcmp = filecmp.dircmp(old_dir, new_dir)
+        remove_identical_files(dcmp, patch_dir, Path(new_dir))
+
+        # Remove empty directories
+        remove_empty_dirs(patch_dir)
+
+        # Create tarball
+        with tarfile.open(output_tarball, 'w:gz') as tar:
+            tar.add(patch_dir, arcname='.')
+
+        print(f"Patch tarball created: {output_tarball}")
+
+def remove_identical_files(dcmp, patch_dir, new_base):
+    """Recursively remove identical files from patch directory."""
+    # Remove identical files
+    for name in dcmp.same_files:
+        file_path = patch_dir / name
+        if file_path.exists():
+            file_path.unlink()
+
+    # Recurse into subdirectories
+    for name, sub_dcmp in dcmp.subdirs.items():
+        sub_patch_dir = patch_dir / name
+        sub_new_base = new_base / name
+        remove_identical_files(sub_dcmp, sub_patch_dir, sub_new_base)
+
+def remove_empty_dirs(directory):
+    """Remove empty directories recursively."""
+    for root, dirs, files in os.walk(directory, topdown=False):
+        for dir_name in dirs:
+            dir_path = Path(root) / dir_name
+            try:
+                if not any(dir_path.iterdir()):
+                    dir_path.rmdir()
+            except OSError:
+                pass
+
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print(f"Usage: python3 {sys.argv[0]} <old_dir> <new_dir> <output.tar.gz>")
+        sys.exit(1)
+
+    create_patch_tarball(sys.argv[1], sys.argv[2], sys.argv[3])
