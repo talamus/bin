@@ -1,0 +1,5 @@
+#!/bin/bash
+sudo systemctl disable nordvpnd.socket
+sudo systemctl stop nordvpnd.socket
+sudo systemctl disable nordvpnd.service
+sudo systemctl stop nordvpnd.service

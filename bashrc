@@ -4,7 +4,7 @@
 
 # Add `~/bin` to PATH if needed:
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
-	PATH="$HOME/bin:$PATH"
+    PATH="$HOME/bin:$PATH"
 fi
 
 # Customizing standard bash things:
@@ -26,6 +26,11 @@ fi
 
 # Use `nano` as the default editor (if available)
 [ $(which nano) ] && export EDITOR=$( which nano )
+
+# Use `ssh-askpass-fullscreen` as SUDO_ASKPASS (if available)
+if [ -x "$(command -v ssh-askpass-fullscreen)" ]; then
+    export SUDO_ASKPASS="$(command -v ssh-askpass-fullscreen)"
+fi
 
 # File explorer
 function e {

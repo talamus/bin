@@ -1,17 +1,26 @@
 #!/bin/bash
 
-SERVER=${1:-8.8.8.8}
-LIMIT=${2:-100}
-GOOD_RESPONSE=' time=([0-9]+?)(.[0-9]+)? ms$'
+SERVER="${1:-8.8.8.8}"
+LIMIT="${2:-100}"
 
 echo "Pinging $SERVER with maximum time limit of $LIMIT ms. Only problems will be printed."
 
-while read LINE; do
-    if [[ ! "$LINE" =~ $GOOD_RESPONSE ]]; then
-        echo "[$( date '+%Y-%m-%d %H:%M:%S' )] $LINE"
-    else
-        if [[ "${BASH_REMATCH[1]}" -gt "$LIMIT" ]]; then
-            echo "[$( date '+%Y-%m-%d %H:%M:%S' )] $LINE"
+# Run ping, filter out irrelevant lines, and process only replies
+ping "$SERVER" | while read -r LINE; do
+    # Only process lines containing 'time=' (ICMP reply)
+    if [[ "$LINE" =~ time=([0-9]+\.[0-9]+|[0-9]+)\ ms ]]; then
+        # Extract the time value using awk for reliability
+        TIME=$(echo "$LINE" | awk -F'time=' '{print $2}' | awk '{print $1}')
+        # Compare as float using awk
+        if awk "BEGIN {exit !($TIME > $LIMIT)}"; then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] $LINE"
         fi
+    elif [[ "$LINE" =~ ^(PING|---|rtt|statistics|packets|^$) ]]; then
+        # Ignore startup, summary, and empty lines
+        continue
+    else
+        # Print any other line (errors, unreachable, etc.)
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] $LINE"
+        aplay "$HOME/Sounds/bicycle-bell-382718.wav"
     fi
-done < <( ping "$SERVER" )
+done
