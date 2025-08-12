@@ -24,8 +24,8 @@ def create_patch_tarball(old_dir, new_dir, output_tarball):
         remove_empty_dirs(patch_dir)
 
         # Create tarball
-        with tarfile.open(output_tarball, 'w:gz') as tar:
-            tar.add(patch_dir, arcname='.')
+        with tarfile.open(output_tarball, "w:gz") as tar:
+            tar.add(patch_dir, arcname=".")
 
         print(f"Patch tarball created: {output_tarball}")
 
