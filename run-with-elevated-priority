@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+# Validate input
+if [ $# -eq 0 ]; then
+    echo "Error: No command specified" >&2
+    exit 1
+fi
+
+# Check if SUDO_ASKPASS is not set
+if [ -z "$SUDO_ASKPASS" ]; then
+    # Verify if the echo-password script exists
+    if [ ! -f "${HOME}/.local/bin/echo-password" ]; then
+        echo "Error: echo-password script not found at ${HOME}/.local/bin/echo-password"
+        exit 100
+    fi
+
+    # Ensure the echo-password script is readable and executable by the current user only
+    if [ "$(stat -c "%a" "${HOME}/.local/bin/echo-password")" != "700" ]; then
+        echo "Error: echo-password script permissions must be set to 700"
+        exit 200
+    fi
+
+    export SUDO_ASKPASS="${HOME}/.local/bin/echo-password"
+fi
+
+# Create a temporary script to hold the command with restricted permissions
+TEMP_SCRIPT=$(mktemp --suffix=.sh -m 600)
+echo "Temporary script file: $TEMP_SCRIPT"
+trap 'echo "Cleaning up..."; rm -f "$TEMP_SCRIPT"' EXIT INT TERM
+echo "#!/bin/bash" > "$TEMP_SCRIPT"
+for arg in "$@"; do
+    printf '%s\n' "$arg" >> "$TEMP_SCRIPT"
+done
+echo "Command to be executed with elevated priority..."
+
+# Run the temporary script with elevated priority
+sudo -A -p "Authentication required" \
+    ionice -c2 -n2 \
+    nice -n -5 \
+    su -s /bin/bash "$USER" -c "bash '$TEMP_SCRIPT'"
+EXIT_VALUE=$?
+echo "Command finished with exit code $EXIT_VALUE."
+exit $EXIT_VALUE

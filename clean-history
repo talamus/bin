@@ -1,3 +1,14 @@
 #!/bin/bash
-rm "$HOME/.bash_history"
-history -c
+
+# Clear bash history file
+rm -f "$HOME/.bash_history" 2>/dev/null
+
+# Clear cache directories
+rm -rf "$HOME/.cache/thumbnails" 2>/dev/null
+
+# Clear recent files and application usage
+rm -f "$HOME/.local/share/recently-used.xbel" 2>/dev/null
+rm -rf "$HOME/.local/share/zeitgeist" 2>/dev/null
+
+# Clear shell history from memory
+history -c 2>/dev/null
