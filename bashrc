@@ -2,12 +2,16 @@
 #
 # source ~/bin/bashrc
 
-# Add `~/bin` to PATH if needed:
+# Add `~/bin` and `~/.local/bin` to PATH if needed:
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     PATH="$HOME/bin:$PATH"
 fi
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
 
 # Customizing standard bash things:
+
 if [[ "$WSL_DISTRO_NAME" != "" ]]; then
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
@@ -15,8 +19,9 @@ unalias ll 2> /dev/null
 unalias la 2> /dev/null
 unalias l  2> /dev/null
 
-alias nuke="rm -frI"	# Safer `rm -fr`
-alias untar="tar zxvf"  # When you do not remember how to explode a tarball
+alias grep="grep --color=auto"  # Colorized grep output
+alias nuke="rm -frI"	        # Safer `rm -fr`
+alias untar="tar zxvf"          # When you do not remember how to explode a tarball
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
