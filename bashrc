@@ -48,7 +48,7 @@ function e {
 
 # Output current Git branch name
 function current-git-branch {
-    regex="\* ([A-Za-z0-9/_-]+)"
+    regex="\* ([^[:space:]]+)"
     [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
 }
 
