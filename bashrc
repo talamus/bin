@@ -144,6 +144,10 @@ case "$HOSTNAME" in
         PS1_COLOR="1;34"
         PS1_PATH_COLOR="1;97"
         ;;
+    "olohuone")
+        PS1_COLOR="1;34"
+        PS1_PATH_COLOR="1;97"
+        ;;
     "raspberrypi")
         PS1_COLOR="1;32"
         PS1_PATH_COLOR="1;97"
