@@ -12,7 +12,7 @@ fi
 
 # Customizing standard bash things:
 
-if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+if [[ -n "$WSL_DISTRO_NAME" ]]; then
     export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 fi
 unalias ll 2> /dev/null
@@ -21,16 +21,16 @@ unalias l  2> /dev/null
 
 alias grep="grep --color=auto"  # Colorized grep output
 alias nuke="rm -frI"	        # Safer `rm -fr`
-alias untar="tar zxvf"          # When you do not remember how to explode a tarball
+alias untar="tar xvf"           # When you do not remember how to explode a tarball
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
-if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+if [[ -n "$WSL_DISTRO_NAME" ]]; then
     alias ps="powershell.exe"
 fi
 
 # Use `nano` as the default editor (if available)
-[ $(which nano) ] && export EDITOR=$( which nano )
+command -v nano &>/dev/null && export EDITOR="$(command -v nano)"
 
 # Use `ssh-askpass-fullscreen` as SUDO_ASKPASS (if available)
 if [ -x "$(command -v ssh-askpass-fullscreen)" ]; then
@@ -39,17 +39,16 @@ fi
 
 # File explorer
 function e {
-    if [[ "$WSL_DISTRO_NAME" == "" ]]; then
-        xdg-open "$*"
+    if [[ -z "$WSL_DISTRO_NAME" ]]; then
+        xdg-open "$@"
     else
-        "explorer.exe" "$*"
+        "explorer.exe" "$@"
     fi
 }
 
 # Output current Git branch name
 function current-git-branch {
-    regex="\* ([^[:space:]]+)"
-    [[ $(git branch 2> /dev/null) =~ $regex ]] && echo "${BASH_REMATCH[1]}"
+    git branch --show-current 2>/dev/null
 }
 
 # Output current Terraform workspace name (with color)
@@ -72,9 +71,10 @@ function current-terraform-workspace {
 }
 
 # Say something (in WSL2)
-if [[ "$WSL_DISTRO_NAME" != "" ]]; then
+if [[ -n "$WSL_DISTRO_NAME" ]]; then
     function win-speak {
-        /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$*')" > /dev/null
+        local text="${*//\'/\'\'}"
+        /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$text')" > /dev/null
     }
 fi
 
@@ -168,28 +168,28 @@ PS1+="\u@\H ["                                  # user@host [
 PS1+="]"                                        # ]
 PS1+="\[\e[${PS1_GIT_COLOR}m\]"
 PS1+=" \$(current-git-branch)"                  # Git branch
-if [ $(which terraform) ]; then
+if command -v terraform &>/dev/null; then
     PS1+=" \$(current-terraform-workspace)"     # Terraform workspace
 fi
 PS1+="\[\e[0m\]"
 PS1+="\n"                                       # \n
 #PS1+="\[\e[K\]"                                # clear to the end of the line
 PS1+="\$ "                                      # $
-export PS1
+# PS1 is used by the current shell only, no need to export
 
 ### Command line completion ##################################################
 
 # Hetzner Cloud CLI
-[ $(which hcloud) ] && source <(hcloud completion bash)
+command -v hcloud &>/dev/null && source <(hcloud completion bash)
 
 # One Password CLI
-[ $(which op) ] && source <(op completion bash)
+command -v op &>/dev/null && source <(op completion bash)
 
 # AWS CLI
-[ $(which aws_completer) ] && complete -C /usr/local/bin/aws_completer aws
+command -v aws_completer &>/dev/null && complete -C "$(command -v aws_completer)" aws
 
 # Terraform
-[ $(which terraform) ] && complete -C /usr/bin/terraform terraform
+command -v terraform &>/dev/null && complete -C "$(command -v terraform)" terraform
 
 ### Programming language version management ##################################
 
