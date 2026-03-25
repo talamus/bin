@@ -13,7 +13,7 @@ fi
 # Customizing standard bash things:
 
 if [[ -n "$WSL_DISTRO_NAME" ]]; then
-    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+    export LS_COLORS="$LS_COLORS:ow=01;40;34"  # Un-uglify WSL directories
 fi
 unalias ll 2> /dev/null
 unalias la 2> /dev/null
