@@ -92,7 +92,7 @@ fi
 # /there
 #
 # $ sudo losetup -l    # Listing mounted images
-# NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE                                                                                      DIO
+# NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE
 # /dev/loop1         0      0         0  0 /full/path/to/my.img
 #
 # $ losd 0             # Cleanup
@@ -156,7 +156,15 @@ case "$HOSTNAME" in
         PS1_COLOR="1;35"
         PS1_PATH_COLOR="1;97"
         ;;
+    "typewriter")
+        PS1_COLOR="1;38;2;255;131;0"
+        PS1_PATH_COLOR="1;97"
+        export LS_COLORS="$LS_COLORS:di=01;38;2;193;87;31"
+        ;;
 esac
+# bright orange #FF8300
+# mid orange    #C1571F
+# dull orange   #693215
 
 PS1=""
 #PS1+="\[\e[0;${PS1_TIME_COLOR}m\r\e[K\e[$((COLUMNS-20))C\$( date +'%F %H:%M:%S' )\r\]" # date and time
