@@ -140,7 +140,7 @@ fi
 # $ ls /dev | grep loop0
 # loop0
 
-los() (
+function los() (
     img="$1"
     dev="$(sudo losetup --show -f -P "$img")"
     echo "$dev"
@@ -155,7 +155,7 @@ los() (
     done
 )
 
-losd() (
+function losd() (
     dev="/dev/loop$1"
     for part in "$dev"?*; do
         if [ "$part" = "${dev}p*" ]; then
@@ -214,7 +214,9 @@ PS1+="\u@\H ["                                  # user@host [
     PS1+="\[\e[${PS1_COLOR}m\]"
 PS1+="]"                                        # ]
 PS1+="\[\e[${PS1_GIT_COLOR}m\]"
-PS1+=" \$(current-git-branch)"                  # Git branch
+if command-exists terraform; then
+    PS1+=" \$(current-git-branch)"              # Git branch
+fi
 if command-exists terraform; then
     PS1+=" \$(current-terraform-workspace)"     # Terraform workspace
 fi
@@ -222,7 +224,6 @@ PS1+="\[\e[0m\]"
 PS1+="\n"                                       # \n
 #PS1+="\[\e[K\]"                                # clear to the end of the line
 PS1+="\$ "                                      # $
-# PS1 is used by the current shell only, no need to export
 
 ### Programming language version management ##################################
 
