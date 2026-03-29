@@ -2,6 +2,16 @@
 #
 # source ~/bin/bashrc
 
+# Return success if we are in WSL:
+function we-are-in-wsl() {
+    [[ -n "$WSL_DISTRO_NAME" ]]
+}
+
+# Return success if a command exists:
+function command-exists() {
+    command -v "$1" &>/dev/null
+}
+
 # Add `~/bin` and `~/.local/bin` to PATH if needed:
 if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
     PATH="$HOME/bin:$PATH"
@@ -12,12 +22,14 @@ fi
 
 # Customizing standard bash things:
 
-if [[ -n "$WSL_DISTRO_NAME" ]]; then
+if we-are-in-wsl; then
     export LS_COLORS="$LS_COLORS:ow=01;40;34"  # Un-uglify WSL directories
 fi
 unalias ll 2> /dev/null
 unalias la 2> /dev/null
 unalias l  2> /dev/null
+
+### Common command ###########################################################
 
 alias grep="grep --color=auto"  # Colorized grep output
 alias nuke="rm -frI"	        # Safer `rm -fr`
@@ -25,26 +37,32 @@ alias untar="tar xvf"           # When you do not remember how to explode a tarb
 alias git-tree="git log --oneline --graph --decorate --all"  # Pretty git branch tree
 alias ssh-nohostkeycheck="ssh -o StrictHostKeyChecking=no"
 
-if [[ -n "$WSL_DISTRO_NAME" ]]; then
+# If we are in WSL, alias PowerShell to `ps`
+if we-are-in-wsl; then
     alias ps="powershell.exe"
 fi
 
+# Prefer `podman` over `docker` (if available)
+if command-exists podman; then
+    alias docker="podman"
+fi
+
 # Use `nano` as the default editor (if available)
-command -v nano &>/dev/null && export EDITOR="$(command -v nano)"
+if command-exists nano; then
+    export EDITOR=nano
+fi
 
 # Use `ssh-askpass-fullscreen` as SUDO_ASKPASS (if available)
-if [ -x "$(command -v ssh-askpass-fullscreen)" ]; then
+if command-exists ssh-askpass-fullscreen; then
     export SUDO_ASKPASS="$(command -v ssh-askpass-fullscreen)"
 fi
 
 # File explorer
-function e {
-    if [[ -z "$WSL_DISTRO_NAME" ]]; then
-        xdg-open "$@"
-    else
-        "explorer.exe" "$@"
-    fi
-}
+if we-are-in-wsl; then
+    alias e="explorer.exe"
+else
+    alias e="xdg-open"
+fi
 
 # Output current Git branch name
 function current-git-branch {
@@ -54,8 +72,8 @@ function current-git-branch {
 # Output current Terraform workspace name (with color)
 function current-terraform-workspace {
     [ -d .terraform ] || return 0
-    WORKSPACE="$( terraform workspace show )"
-    COLOR=97
+    local WORKSPACE="$( terraform workspace show )"
+    local COLOR=97
     case $WORKSPACE in
         dev | development)
             COLOR=92
@@ -71,11 +89,33 @@ function current-terraform-workspace {
 }
 
 # Say something (in WSL2)
-if [[ -n "$WSL_DISTRO_NAME" ]]; then
+if we-are-in-wsl; then
     function win-speak {
         local text="${*//\'/\'\'}"
-        /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$text')" > /dev/null
+        powershell.exe -Command "(New-Object -ComObject Sapi.spvoice).speak('$text')" > /dev/null
     }
+fi
+
+### Command line completion ##################################################
+
+# Hetzner Cloud CLI
+if command-exists hcloud; then
+    source <(hcloud completion bash)
+fi
+
+# One Password CLI
+if command-exists op; then
+    source <(op completion bash)
+fi
+
+# AWS CLI
+if command-exists aws_completer; then
+    complete -C "$(command -v aws_completer)" aws
+fi
+
+# Terraform
+if command-exists terraform; then
+    complete -C "$(command -v terraform)" terraform
 fi
 
 ### Mounting multipartition images ###########################################
@@ -127,7 +167,6 @@ losd() (
     sudo losetup -d "$dev"
 )
 
-
 ### Fancy color prompt #######################################################
 
 PS1_COLOR="1;97"
@@ -157,14 +196,14 @@ case "$HOSTNAME" in
         PS1_PATH_COLOR="1;97"
         ;;
     "typewriter")
+        # bright orange #FF8300
+        # mid orange    #C1571F
+        # dull orange   #693215
         PS1_COLOR="1;38;2;255;131;0"
         PS1_PATH_COLOR="1;97"
         export LS_COLORS="$LS_COLORS:di=01;38;2;193;87;31"
         ;;
 esac
-# bright orange #FF8300
-# mid orange    #C1571F
-# dull orange   #693215
 
 PS1=""
 #PS1+="\[\e[0;${PS1_TIME_COLOR}m\r\e[K\e[$((COLUMNS-20))C\$( date +'%F %H:%M:%S' )\r\]" # date and time
@@ -176,7 +215,7 @@ PS1+="\u@\H ["                                  # user@host [
 PS1+="]"                                        # ]
 PS1+="\[\e[${PS1_GIT_COLOR}m\]"
 PS1+=" \$(current-git-branch)"                  # Git branch
-if command -v terraform &>/dev/null; then
+if command-exists terraform; then
     PS1+=" \$(current-terraform-workspace)"     # Terraform workspace
 fi
 PS1+="\[\e[0m\]"
@@ -184,20 +223,6 @@ PS1+="\n"                                       # \n
 #PS1+="\[\e[K\]"                                # clear to the end of the line
 PS1+="\$ "                                      # $
 # PS1 is used by the current shell only, no need to export
-
-### Command line completion ##################################################
-
-# Hetzner Cloud CLI
-command -v hcloud &>/dev/null && source <(hcloud completion bash)
-
-# One Password CLI
-command -v op &>/dev/null && source <(op completion bash)
-
-# AWS CLI
-command -v aws_completer &>/dev/null && complete -C "$(command -v aws_completer)" aws
-
-# Terraform
-command -v terraform &>/dev/null && complete -C "$(command -v terraform)" terraform
 
 ### Programming language version management ##################################
 
