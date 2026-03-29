@@ -214,7 +214,7 @@ PS1+="\u@\H ["                                  # user@host [
     PS1+="\[\e[${PS1_COLOR}m\]"
 PS1+="]"                                        # ]
 PS1+="\[\e[${PS1_GIT_COLOR}m\]"
-if command-exists terraform; then
+if command-exists git; then
     PS1+=" \$(current-git-branch)"              # Git branch
 fi
 if command-exists terraform; then
