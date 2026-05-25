@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+find . -name "*:Zone.Identifier" -type f -delete

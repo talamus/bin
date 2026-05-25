@@ -2,6 +2,7 @@
 
 SERVER="${1:-8.8.8.8}"
 LIMIT="${2:-100}"
+SOUND_FILE="$HOME/Sounds/bicycle-bell-382718.wav"
 
 echo "Pinging $SERVER with maximum time limit of $LIMIT ms. Only problems will be printed."
 
@@ -21,6 +22,8 @@ ping "$SERVER" | while read -r LINE; do
     else
         # Print any other line (errors, unreachable, etc.)
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] $LINE"
-        aplay "$HOME/Sounds/bicycle-bell-382718.wav"
+        if command -v aplay >/dev/null 2>&1 && [[ -f "$SOUND_FILE" ]]; then
+            aplay "$SOUND_FILE"
+        fi
     fi
 done
