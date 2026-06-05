@@ -47,6 +47,11 @@ if command-exists podman; then
     alias docker="podman"
 fi
 
+# If `code` is not available, use `zed` instead
+if ! command-exists code; then
+    alias code="zed"
+fi
+
 # Use `nano` as the default editor (if available)
 if command-exists nano; then
     export EDITOR=nano
@@ -232,14 +237,6 @@ if [ -d "$HOME/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
     source "$NVM_DIR/nvm.sh"           # This loads `nvm`
     source "$NVM_DIR/bash_completion"  # This loads `nvm` bash completion
-fi
-
-# Python
-if [ -d "$HOME/.pyenv" ]; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PATH:$PYENV_ROOT/bin"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
 fi
 
 # eof
