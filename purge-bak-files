@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-find . -name "*.bak" -type f -delete
+find . -name "*.bak" -type f -print -delete
