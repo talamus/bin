@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+read -r -p "Install/update Claude Code now? [Y/n] " reply
+case "$reply" in
+  [nN]*) echo "Aborted."; exit 1 ;;
+esac
+
+curl -fsSL https://claude.ai/install.sh | bash
