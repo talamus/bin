@@ -230,6 +230,43 @@ PS1+="\n"                                       # \n
 #PS1+="\[\e[K\]"                                # clear to the end of the line
 PS1+="\$ "                                      # $
 
+### Shared repo update check #################################################
+
+function _check_shared_repos() {
+    local repos=("$HOME/bin" "$HOME/.config/zed")
+    local fetch_interval=3600  # seconds between fetches
+
+    for repo in "${repos[@]}"; do
+        [ -d "$repo/.git" ] || continue
+
+        local stamp="$repo/.git/last-bg-fetch"
+
+        # Background fetch, throttled
+        local now
+        now=$(date +%s)
+        local last=0
+        [ -f "$stamp" ] && last=$(cat "$stamp")
+        if (( now - last > fetch_interval )); then
+            ( git -C "$repo" fetch --quiet 2>/dev/null && echo "$now" > "$stamp" ) &
+            disown
+        fi
+
+        # Local-only check: is master behind origin/master?
+        local local_ref remote_ref
+        local_ref=$(git -C "$repo" rev-parse master 2>/dev/null) || continue
+        remote_ref=$(git -C "$repo" rev-parse origin/master 2>/dev/null) || continue
+        if [ "$local_ref" != "$remote_ref" ]; then
+            local count
+            count=$(git -C "$repo" rev-list master..origin/master --count 2>/dev/null)
+            if [ "$count" -gt 0 ] 2>/dev/null; then
+                echo -e "\e[1;33m⚠ ${repo/#$HOME/\~} is $count commit(s) behind origin/master — consider: git -C $repo pull\e[0m"
+            fi
+        fi
+    done
+}
+
+_check_shared_repos
+
 ### Programming language version management ##################################
 
 # NodeJS
