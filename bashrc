@@ -259,7 +259,7 @@ function _check_shared_repos() {
             local count
             count=$(git -C "$repo" rev-list master..origin/master --count 2>/dev/null)
             if [ "$count" -gt 0 ] 2>/dev/null; then
-                echo -e "\e[1;33m⚠ ${repo/#$HOME/\~} is $count commit(s) behind origin/master — consider: git -C $repo pull\e[0m"
+                echo -e "\e[0;31m ● \e[0;1m${repo/#$HOME/\~} is $count commit(s) behind origin/master, consider:\e[0;2m git -C $repo pull\e[0m"
             fi
         fi
     done
