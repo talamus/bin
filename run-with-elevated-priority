@@ -25,7 +25,7 @@ if [ -z "$SUDO_ASKPASS" ]; then
 fi
 
 # Create a temporary script to hold the command with restricted permissions
-TEMP_SCRIPT=$(mktemp --suffix=.sh -m 600)
+TEMP_SCRIPT=$(mktemp --suffix=.sh)
 echo "Temporary script file: $TEMP_SCRIPT"
 trap 'echo "Cleaning up..."; rm -f "$TEMP_SCRIPT"' EXIT INT TERM
 echo "#!/bin/bash" > "$TEMP_SCRIPT"
@@ -41,4 +41,5 @@ sudo -A -p "Authentication required" \
     su -s /bin/bash "$USER" -c "bash '$TEMP_SCRIPT'"
 EXIT_VALUE=$?
 echo "Command finished with exit code $EXIT_VALUE."
+rm "$TEMP_SCRIPT"
 exit $EXIT_VALUE
